@@ -73,4 +73,16 @@ class UserModel extends CI_Model
             return false;
         }
     }
+
+    public function is_user_active($user_id){
+        $this->db->where('user_id', $user_id);
+        $this->db->where('status', 1);
+        $query = $this->db->get('user');
+        if ($query->num_rows() > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }

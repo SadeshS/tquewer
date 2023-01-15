@@ -56,3 +56,6 @@ $route['api'] = 'api/Me';
 
 $route['api/user'] = 'api/UserController';
 $route['api/user/(:any)'] = 'api/UserController';
+
+$route['api/question'] = 'api/QuestionController';
+$route['api/question/(:any)'] = 'api/QuestionController';
