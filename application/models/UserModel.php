@@ -85,4 +85,38 @@ class UserModel extends CI_Model
             return false;
         }
     }
+
+    public function login_user($email, $password) {
+        $this->db->where('email', $email);
+        $query = $this->db->get('user');
+
+        if ($query->num_rows() == 0)
+            return array('status' => false,
+                            'user' => null,
+                            'message' => 'No User Found',
+                            'error_code' => 404);
+        
+        $row = $query->result()[0];
+        $hashed_password = $row->password;
+
+        if($row->status !== "1")
+            return array('status' => false,
+                            'user' => null,
+                            'statu' => $row->status,
+                            'message' => 'User is deleted',
+                            'error_code' => 404);
+
+        if(!password_verify($password, $hashed_password))
+            return array('status' => false,
+                            'user' => null,
+                            'message' => 'Password is not valid',
+                            'error_code' => 401);
+
+        return array('status' => true,
+                        'user' => array( 'user_id' => $row->user_id,
+                                            'first_name' => $row->first_name, 
+                                            'last_name' => $row->last_name,
+                                            'email' => $row->email, 
+                                            'phone_number' => $row->phone_number));
+    }
 }

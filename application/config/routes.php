@@ -54,8 +54,26 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 $route['api'] = 'api/Me';
 
+// for user apis
 $route['api/user'] = 'api/UserController';
+$route['api/user/auth'] = 'api/UserController/auth';
 $route['api/user/(:any)'] = 'api/UserController';
 
+// for question apis
 $route['api/question'] = 'api/QuestionController';
 $route['api/question/(:any)'] = 'api/QuestionController';
+$route['api/questions/user/(:any)'] = 'api/QuestionController/user_questions';
+$route['api/questions/all'] = 'api/QuestionController/all';
+
+// for answer apis
+$route['api/answer'] = 'api/AnswerController';
+$route['api/answer/(:any)'] = 'api/AnswerController';
+$route['api/answers/user/(:any)'] = 'api/AnswerController/user_answers';
+$route['api/answers/question/(:any)'] = 'api/AnswerController/question_answers';
+
+// for tag apis
+$route['api/tag'] = 'api/TagController';
+$route['api/tags/question/(:any)'] = 'api/TagController/question_tags';
+
+// for vote apis
+$route['api/vote'] = 'api/VoteController';
