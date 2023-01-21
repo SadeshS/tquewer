@@ -8,18 +8,9 @@ require (APPPATH . 'libraries/Format.php');
 class UserController extends RestController {
 
     public function __construct() {
-        // to avoid the cors issues
-        header('Access-Control-Allow-Origin: *');
-        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method == "OPTIONS") {
-            die();
-        }
-
         parent::__construct();
         $this->load->helper('url');
-        $this->load->model('usermodel', 'UM');
+        $this->load->model('UserModel', 'UM');
     }
 
     // getting user details by user id

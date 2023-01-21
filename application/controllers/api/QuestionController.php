@@ -7,21 +7,13 @@ require (APPPATH . 'libraries/Format.php');
 
 class QuestionController extends RestController {
 
-    public function __construct() {
-        // to avoid the cors issues
-        header('Access-Control-Allow-Origin: *');
-        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method == "OPTIONS") {
-            die();
-        }
-        
+    public function __construct() {        
         parent::__construct();
         $this->load->helper('url');
-        $this->load->model('usermodel', 'UM');
-        $this->load->model('questionmodel', 'QM');
-        $this->load->model('tagmodel', 'TM');
+        $this->load->model('UserModel', 'UM');
+        $this->load->model('QuestionModel', 'QM');
+        $this->load->model('TagModel', 'TM');
+        $this->load->model('AnswerModel', 'AM');
     }
 
     // getting a question by given question id
@@ -133,5 +125,23 @@ class QuestionController extends RestController {
         else
             $this->response([$res], RestController::HTTP_INTERNAL_ERROR);
 
+    }
+
+    // marking an answer as solution of the question
+    public function mark_solution_post() {
+        $question_id = $this->post('question_id');
+        $answer_id = $this->post('answer_id');
+
+        if(!$this->QM->is_question_active($question_id))
+            $this->response(['message'=> 'Question Not Found!'], RestController::HTTP_NOT_FOUND);
+
+        $this->QM->marking_solved($question_id);
+
+        $res = $this->AM->marking_as_solution($answer_id);
+
+        if($res)
+            $this->response(['message'=>'Solution Marked Successful!'], RestController::HTTP_OK);
+        else
+            $this->response([$res], RestController::HTTP_INTERNAL_ERROR);
     }
 }

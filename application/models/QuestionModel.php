@@ -6,6 +6,7 @@ class QuestionModel extends CI_Model
     public function __construct() {
         parent::__construct();
         $this->load->database();
+        $this->load->model('TagModel', 'TM');
     }
 
     // getting all question with filtering and sorting
@@ -31,7 +32,40 @@ class QuestionModel extends CI_Model
 
         $query_result = $this->db->query($query);
 
-        return $query_result->result();
+        $questions = array();
+
+        if ($query_result->num_rows() > 0){
+            foreach ($query_result->result() as $question) {
+                $tags_res = $this->TM->get_tags_by_question_id($question->question_id);
+                $tags = array();
+                if($tags_res) {
+                    foreach ($tags_res as $tag) {
+                        array_push($tags, $tag->title);
+                    }
+                }
+
+                
+                $updated_question = array('question_id' => $question->question_id, 
+                                            'title' => $question->title, 
+                                            'description' => $question->description, 
+                                            'user_id' => $question->user_id, 
+                                            'is_solved' => $question->is_solved,
+                                            'created_date' => $question->created_date, 
+                                            'last_updated' => $question->last_updated, 
+                                            'vote_count' => $question->vote_count, 
+                                            'answer_count' => $question->answer_count, 
+                                            'first_name' => $question->first_name, 
+                                            'last_name' => $question->last_name,
+                                            'tags' => $tags);
+
+                array_push($questions, $updated_question);
+            }
+
+            return $questions;
+        }
+        else {
+            return $query_result->result();
+        }
     }
 
     // getting question details by given question id
@@ -87,6 +121,13 @@ class QuestionModel extends CI_Model
         return $res;
     }
 
+    public function marking_solved($question_id) {
+        $this->db->where('question_id', $question_id);
+        $res = $this->db->update('question', array('is_solved' => 1));
+
+        return $res;
+    }
+
     // check whether the question exists
     public function qusetion_exists($question_id) {
         $this->db->where('question_id', $question_id);
@@ -110,5 +151,16 @@ class QuestionModel extends CI_Model
         else{
             return false;
         }
+    }
+
+    // update the updated time 
+    public function update_last_updated_time($question_id){
+        $now_date_time = date("Y-m-d H:i:s");
+        $updated_data = array('last_updated' => $now_date_time);
+
+        $this->db->where('question_id', $question_id);
+        $res = $this->db->update('question', $updated_data);
+
+        return $res;
     }
 }

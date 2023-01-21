@@ -74,6 +74,13 @@ class AnswerModel extends CI_Model
         return $res;
     }
 
+    public function marking_as_solution($answer_id) {
+        $this->db->where('answer_id', $answer_id);
+        $res = $this->db->update('answer', array('is_solution' => 1));
+
+        return $res;
+    }
+
     // check wether the answer exists
     public function answer_exists($answer_id) {
         $this->db->where('answer_id', $answer_id);

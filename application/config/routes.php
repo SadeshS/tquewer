@@ -61,6 +61,7 @@ $route['api/user/(:any)'] = 'api/UserController';
 
 // for question apis
 $route['api/question'] = 'api/QuestionController';
+$route['api/question/solution'] = 'api/QuestionController/mark_solution';
 $route['api/question/(:any)'] = 'api/QuestionController';
 $route['api/questions/user/(:any)'] = 'api/QuestionController/user_questions';
 $route['api/questions/all'] = 'api/QuestionController/all';

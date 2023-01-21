@@ -7,20 +7,12 @@ require (APPPATH . 'libraries/Format.php');
 
 class AnswerController extends RestController {
 
-    public function __construct() {
-        // to avoid the cors issues
-        header('Access-Control-Allow-Origin: *');
-        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method == "OPTIONS") {
-            die();
-        }
-        
+    public function __construct() {        
         parent::__construct();
         $this->load->helper('url');
-        $this->load->model('usermodel', 'UM');
-        $this->load->model('answermodel', 'AM');
+        $this->load->model('UserModel', 'UM');
+        $this->load->model('AnswerModel', 'AM');
+        $this->load->model('QuestionModel', 'QM');
     }
 
     // getting an answer by given answer id
@@ -48,6 +40,7 @@ class AnswerController extends RestController {
         $res = $this->AM->create_an_answer($user_id, $description, $question_id);
 
         if($res) {
+            $this->QM->update_last_updated_time($question_id);
             $this->response(['message'=>'Answer Created Successful!'], RestController::HTTP_OK);
         } else {
             $this->response(['message'=>'Answer Created Unsuccessful!'], RestController::HTTP_INTERNAL_ERROR);
@@ -63,11 +56,14 @@ class AnswerController extends RestController {
             $this->response(['message'=>'Answer Not Found!'], RestController::HTTP_NOT_FOUND);
 
         $description = $this->put('description');
+        $question_id = $this->put('question_id');
 
         $res = $this->AM->update_an_answer($answer_id, $description);
 
-        if($res)
+        if($res) {
+            $this->QM->update_last_updated_time($question_id);
             $this->response(['message'=>'Answer Updated Successful!'], RestController::HTTP_OK);
+        }
         else
             $this->response(['message'=>'Answer Updated Unsuccessful!'], RestController::HTTP_INTERNAL_ERROR);
         
